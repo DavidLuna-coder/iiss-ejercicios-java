@@ -26,7 +26,6 @@ Posibles razones para refactorizar código, según [Code Complete]:
 - Se usan variables globales
 - Una función contiene código que parece que será necesario algún día pero en la actualidad no se utiliza
 
-
 #### Refactorización en el uso de datos
 
 - Reemplazar un número utilizado directamente por una constante
@@ -81,8 +80,8 @@ Un data stream representa una secuencia de elementos que soportan diferentes tip
 
 Las operaciones sobre un stream pueden ser intermediarias o terminales
 
-  - Las operaciones __intermediarias__ devuelven un nuevo stream permitiendo encadenar múltiples operaciones intermediarias sin usar punto y coma
-  - Las operaciones __terminales__ son nulas o devuelven un resultado de un tipo diferente, normalmente un valor agregado a partir de cómputos anteriores
+- Las operaciones __intermediarias__ devuelven un nuevo stream permitiendo encadenar múltiples operaciones intermediarias sin usar punto y coma
+- Las operaciones __terminales__ son nulas o devuelven un resultado de un tipo diferente, normalmente un valor agregado a partir de cómputos anteriores
 
 ---
 
@@ -112,7 +111,7 @@ public class Main{
   - Una __interfaz funcional__ es un objeto cuyo tipo (clase) representa a una función ejecutable con un cierto número de parámetros (normalmente 0, 1 o 2)
   - Una __expresión lambda__ es una interfaz funcional anónima, que especifica el comportamiento de la operación, pero sin especificar formalmente su nombre y tipo de parámetros
 
-- Las operaciones aplicadas no pueden modificar el _estado_ del stream original 
+- Las operaciones aplicadas no pueden modificar el _estado_ del stream original
 
 ---
 
@@ -149,7 +148,7 @@ En el ejemplo anterior, se puede observar que:
 ### Más información
 
 - Winterbe: [Java 8 stream tutorial](https://winterbe.com/posts/2014/07/31/java8-stream-tutorial-examples/)
-- Oracle: [Procesamiento de datos con streams de Java](https://www.oracle.com/lad/technical-resources/articles/java/processing-streams-java-se8.html) 
+- Oracle: [Procesamiento de datos con streams de Java](https://www.oracle.com/lad/technical-resources/articles/java/processing-streams-java-se8.html)
 - Oracle: [Introducción a Expresiones Lambda y API Stream en Java](https://www.oracle.com/lad/technical-resources/articles/java/expresiones-lambda-api-stream-java-part2.html)
 
 ## Ejercicios propuestos
@@ -204,7 +203,7 @@ public class GroupOfUsers {
 
 En la siguiente lista se incluyen 10 posibles problemas que pueden encontrarse en el código de la implementación anterior:
 
-- Código duplicado 
+- Código duplicado
 - Funciones con nombre que no especifica de forma clara su objetivo
 - Rutinas demasiado largas
 - Bucles demasiado largos o demasiado anidados
@@ -217,7 +216,62 @@ En la siguiente lista se incluyen 10 posibles problemas que pueden encontrarse e
 
 a) ¿Existe algún tipo de problema en la implementación anterior de los que se incluye en la lista anterior? ¿Es necesario aplicar refactoring en este caso? En el caso de que existan problemas, indique cuáles son y qué tipos de problemas piensa que generarían en el futuro si no se aplica el refactoring ahora.
 
+- El nombre del atributo userWithPoints no es lo suficientemente descriptivo. Esto es problemático porque hace que el código sea más dificil de mantener ya que no sabemos realmente de que tipo es userWithPoints.
+
+- La función GetUsers tiene demasiadas responsabilidades. En concreto la de ordenar a los usuarios y poner sus nombres en mayúsculas. El tener demasiadas responsabilidades en un método puede ser problemático en el futuro debido al fuerte acoplamiento que se crea en el código, lo que hace que el código sea poco mantenible.
+
+- Hay comentarios explicando el código, que debería ser autoexplicativo, el primer comentario nos indica que quizás es más conveniente extraer las operaciones en un método llamado `SortUsersByPoints` por ejemplo, y el segundo comentario es redundante, esto puede ser problemático porque a la hora de cambiar la función tenemos que tener en cuenta también el hecho de que tenemos que modificar el comentario.
+
+- En este caso vemos también que el HashMap de `userWithPoints`, está "hardcoded" en la clase. Quizás sería más conveniente inyectar ese Map en el constructor en un método de la clase. El no hacer esto puede ser problemático en caso de querer añadir más usuarios por ejemplo.
+
 b) En el caso de que la implementación necesite la aplicación de refactoring, realice los cambios oportunos e indique las mejoras que aporta su implementación respecto a la original.
+
+```java
+public class UserGroup {
+
+    private Map<String, Integer> userPointsMap;
+
+    public UserGroup(Map<String, Integer> userPointsMap) {
+        this.userPointsMap = userPointsMap;
+    }
+
+    public List<String> getUsers() {
+
+        List<String> usersOrdered = sortUsersByPoints();
+
+        List<String> usersCapitalized = capitalizeNames(users);
+
+        return usersCapitalized;
+    }
+
+    private List<String> sortUsersByPoints(){
+      
+      List<String> users = new ArrayList<String>();
+
+      userPointsMap.entrySet()
+      .stream()
+      .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+      .forEachOrdered(x -> users.add(x.getKey()));
+
+      return users;
+    }
+
+    private List<String> capitalizeNames(List<String> users) {
+        List<String> usersCapitalized = new ArrayList<String>();
+        users.forEach(x -> usersCapitalized.add(x.toUpperCase()));
+        return usersCapitalized;
+    }
+}
+
+```
+
+- Se ha hecho el nombre del atributo más descriptivo, `UserPointsMap`
+
+- Se ha desacoplado la función `getUsers` creando dos nuevos métodos `capitalizeNames` y `sortUsersByPoints`.
+
+- Se han eliminado los comentarios explicando el código pues ya no son necesarios.
+
+- El `Map` de usuarios ahora se inyecta a través del constructor, lo que da más flexibilidad a la hora de añadir más usuarios sin tener que romper el principio OCP.
 
 ### Ejercicio 2
 
@@ -310,7 +364,62 @@ Responda a las siguientes cuestiones, teniendo en cuenta la lista de los 10 posi
 
 a) El software del ejercicio anterior ha evolucionado añadiendo nueva funcionalidad en su implementación. ¿Existe algún tipo de problema en esta versión de la implementación de los que se incluyen en la lista? ¿Es necesario aplicar refactoring en este caso? En el caso de que existan problemas, indique cuáles son y qué tipos de problemas piensa que generarían en el futuro si no se aplica el refactoring ahora.
 
+- Existen problemas de código duplicado. Se repiten los bloques de código que ordena a los usuarios, que ponen sus nombres en mayúsculas y cuando se añaden a la lista principal.
+
+- La función getUsers tiene de nuevo demasiadas responsabilidades. Lo que la hace acoplada y dificil de mantener
+
+- Cualquier cambio en la estructura o comportamiento de la clase GroupOfUsers puede afectar la forma en que se utilizan sus funciones en otras partes del programa.
+
+- Se usan variables estáticas para almacenar los grupos de usuarios lo que hace que la clase no cumpla con la encapsulación y además de que para añadir nuevos grupos de usuarios se seguirían creando aún más variables estáticas.
+
 b) En el caso de que la implementación necesite la aplicación de refactoring, realice los cambios oportunos e indique las mejoras que aporta su implementación respecto a la original.
+
+```java
+public class GroupOfUsers {
+    private List<Map<String, Integer>> userWithPointsGroupList;
+
+    public GroupOfUsers(List<Map<String, Integer>> userWithPointsGroupList) {
+        this.userWithPointsGroupList = userWithPointsGroupList;
+    }
+
+    public List<ArrayList<String>> getUsers() {
+
+        List<ArrayList<String>> users = new ArrayList<ArrayList<String>>();
+
+        userWithPointsGroupList.forEach(userGroupMap -> {
+            ArrayList<String> userGroupList = GetListOfUsersOrderedByPoints(userGroupMap);
+
+            SetListToUppercase(userGroupList);
+
+            users.add(userGroupList);
+        });
+
+        return users;
+    }
+
+    private void SetListToUppercase(ArrayList<String> userGroupList) {
+        userGroupList.forEach(user -> {
+            user.toUpperCase();
+        });
+    }
+
+
+    private ArrayList<String> GetListOfUsersOrderedByPoints(Map<String, Integer> userGroupMap) {
+        ArrayList<String> userList = new ArrayList<>();
+        userGroupMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .forEachOrdered(x -> userList.add(x.getKey()));
+        return userList;
+    }
+}
+```
+
+- En primer lugar agrupamos todos los maps en una lista y hacemos que se pase por el constructor. De esta forma hacemos más flexible la clase y mejoramos su escalabilidad en caso de querer añadir más usuarios.
+
+- Para eliminar la duplicación de código simplemente recorremos esa lista y aplicamos las operaciones necesarias a cada grupo. ``
+
+- Se extraen las operaciones de ordenación y la de poner en mayúsculas a los usuarios en dos métodos `private void SetListToUppercase(ArrayList<String> userGroupList)` y `private ArrayList<String> GetListOfUsersOrderedByPoints(Map<String, Integer> userGroupMap)`
 
 ## Referencias
 
