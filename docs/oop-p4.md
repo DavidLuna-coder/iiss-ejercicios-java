@@ -11,7 +11,7 @@ Las aserciones son un método para aumentar la fiabilidad del código que se est
 > Each assertion contains a boolean expression that you believe will be true when the assertion executes. If it is not true, the system will throw an error. By verifying that the boolean expression is indeed true, the assertion confirms your assumptions about the behavior of your program, increasing your confidence that the program is free of errors.
 >
 > Experience has shown that writing assertions while programming is one of the quickest and most effective ways to detect and correct bugs. As an added benefit, assertions serve to document the inner workings of your program, enhancing maintainability.
-> 
+>
 > -- <cite>[Documentación oficial de Java.](https://docs.oracle.com/javase/8/docs/technotes/guides/language/assert.html)</cite>
 
 A continuación, se muestra un ejemplo de una aserción implementada en Java:
@@ -34,8 +34,8 @@ Estas excepciones pueden ser capturadas, o en caso contrario el intérprete de J
 Exception in thread “main” java.lang.AssertionError
 at AssertTest.main(AssertTest.java:14)
 ```
-En el ejemplo anterior se muestra un error generado donde no se ha especificado ningún mensaje para que sea más descriptivo. A continuación, se muestra un error donde se ha especificado el mensaje:
 
+En el ejemplo anterior se muestra un error generado donde no se ha especificado ningún mensaje para que sea más descriptivo. A continuación, se muestra un error donde se ha especificado el mensaje:
 
 ```text
 Exception in thread “main” java.lang.AssertionError: El precio es menor que 0.
@@ -43,7 +43,6 @@ at AssertTest.main(AssertTest.java:14)
 ```
 
 Como se puede comprobar, la incorporación de mensajes aclaratorios es una buena práctica, ya que en el primer caso es díficil conocer el motivo de error del programa, a no ser que se visualice el contenido de la línea 14 del fichero "AssertTest.java".
-
 
 ## Abuso de null & Optional
 
@@ -57,11 +56,12 @@ A continuación, en el siguiente fragmento de código se muestra un ejemplo de u
 ```java
 Album album = getAlbum("Random Memory Access");
 if(album != null) {
-	return album;
+ return album;
 } else {
-	// Avisar al usuario de que no se ha encontrado el album
+ // Avisar al usuario de que no se ha encontrado el album
 }
 ```
+
 En el siguiente fragmento de código se usa la clase `Optional`. En este caso, se evita la comparación de la variable `album` con el valor `null`, y se utiliza el método `isPresent` en su lugar.
 
 ```java
@@ -83,69 +83,69 @@ Dado los siguientes fragmentos de código, responder a las siguientes preguntas:
 
 ```java
 public class Product {
-	
-	private int code;
-	private String name;
-	private String category;
-	private double weight;
-	private double height;
-	
-	public Product(int code, String name, String category, double weight, double height) {
-		
-		this.code = code;
-		
-		if(name == null) {
-			this.name = "";
-		} else {
-			this.name = name;
-		}
-		
-		if(category == null) {
-			this.category = "";
-		} else {
-			this.category = category;
-		}
-		
-		this.category = category;
-		this.weight = weight;
-		this.height = height;
-	}
-	
-	public int getCode() {
-		return code;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	public void setCategory(String category) {
-		this.category = category;
-	}
-	
-	public String getCategory() {
-		return this.category;
-	}
-	
-	public void setWeight(double weight) {
-		this.weight = weight;
-	}
-	
-	public double getWeight() {
-		return this.weight;
-	}
-	
-	public void setHeight(double height) {
-		this.height = height;
-	}
-	
-	public double getHeight() {
-		return this.height;
-	}
+ 
+ private int code;
+ private String name;
+ private String category;
+ private double weight;
+ private double height;
+ 
+ public Product(int code, String name, String category, double weight, double height) {
+  
+  this.code = code;
+  
+  if(name == null) {
+   this.name = "";
+  } else {
+   this.name = name;
+  }
+  
+  if(category == null) {
+   this.category = "";
+  } else {
+   this.category = category;
+  }
+  
+  this.category = category;
+  this.weight = weight;
+  this.height = height;
+ }
+ 
+ public int getCode() {
+  return code;
+ }
+ 
+ public void setName(String name) {
+  this.name = name;
+ }
+ 
+ public String getName() {
+  return this.name;
+ }
+ 
+ public void setCategory(String category) {
+  this.category = category;
+ }
+ 
+ public String getCategory() {
+  return this.category;
+ }
+ 
+ public void setWeight(double weight) {
+  this.weight = weight;
+ }
+ 
+ public double getWeight() {
+  return this.weight;
+ }
+ 
+ public void setHeight(double height) {
+  this.height = height;
+ }
+ 
+ public double getHeight() {
+  return this.height;
+ }
 }
 ```
 
@@ -156,37 +156,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ShoppingCart {
-	
-	Map<Product, Integer> shoppingCart;
-	
-	public ShoppingCart() {
-		shoppingCart = new HashMap<Product, Integer>();
-	}
-	
-	public void addProduct(Product product, int number) {
-		
-		if(shoppingCart.keySet().stream().filter(element -> element.getCode() == product.getCode()).count() == 0) {
-			shoppingCart.put(product, number);
-		}
-	}
-	
-	public Product removeProduct(Product product) {
-		if(shoppingCart.containsKey(product)) {
-			shoppingCart.remove(product);
-			return product;
-		}  else {
-			return null;
-		}
-	}
-	
-	public void printShoppingCartContent() {
-		System.out.println("The shopping cart content is: ");
-		
-		for(Product product: shoppingCart.keySet()) {
-			System.out.println(product.getCode() + " - " + product.getName() + " : " + shoppingCart.get(product));
-		}
-		
-	}
+ 
+ Map<Product, Integer> shoppingCart;
+ 
+ public ShoppingCart() {
+  shoppingCart = new HashMap<Product, Integer>();
+ }
+ 
+ public void addProduct(Product product, int number) {
+  
+  if(shoppingCart.keySet().stream().filter(element -> element.getCode() == product.getCode()).count() == 0) {
+   shoppingCart.put(product, number);
+  }
+ }
+ 
+ public Product removeProduct(Product product) {
+  if(shoppingCart.containsKey(product)) {
+   shoppingCart.remove(product);
+   return product;
+  }  else {
+   return null;
+  }
+ }
+ 
+ public void printShoppingCartContent() {
+  System.out.println("The shopping cart content is: ");
+  
+  for(Product product: shoppingCart.keySet()) {
+   System.out.println(product.getCode() + " - " + product.getName() + " : " + shoppingCart.get(product));
+  }
+  
+ }
 }
 ```
 
@@ -194,31 +194,31 @@ public class ShoppingCart {
 
 ```java
 public class Main {
-	
-	public static void main(String args[]) {
-		ShoppingCart shoppingCart = new ShoppingCart();
-		
-		Product product1 = new Product(1, "Product1", "Category1", -1.0, 2.0);
-		Product product2 = new Product(2, "Product2", "Category2", 5.0, -6.0);
-		Product product3 = new Product(3, "Product3", null, 5.0, 6.0);
-		Product product4 = new Product(4, null, "Category4", 5.0, 6.0);
-		Product product5 = new Product(4, "Product5", "Caregory5", 5.0, 6.0);
-		Product product6 = new Product(-6, "Product6", "Caregory6", 5.0, 6.0);
-		
-		
-		shoppingCart.addProduct(product1, 2);
-		shoppingCart.addProduct(product2, 1);
-		shoppingCart.addProduct(product3, 0);
-		shoppingCart.addProduct(product4, -2);
-		shoppingCart.addProduct(product5, 3);
-		shoppingCart.addProduct(product6, 3);
-		
-		if(shoppingCart.removeProduct(product1) != null) {
-			System.out.println("The product has been successfully deleted.");
-		}
-		
-		shoppingCart.printShoppingCartContent();
-	}
+ 
+ public static void main(String args[]) {
+  ShoppingCart shoppingCart = new ShoppingCart();
+  
+  Product product1 = new Product(1, "Product1", "Category1", -1.0, 2.0);
+  Product product2 = new Product(2, "Product2", "Category2", 5.0, -6.0);
+  Product product3 = new Product(3, "Product3", null, 5.0, 6.0);
+  Product product4 = new Product(4, null, "Category4", 5.0, 6.0);
+  Product product5 = new Product(4, "Product5", "Caregory5", 5.0, 6.0);
+  Product product6 = new Product(-6, "Product6", "Caregory6", 5.0, 6.0);
+  
+  
+  shoppingCart.addProduct(product1, 2);
+  shoppingCart.addProduct(product2, 1);
+  shoppingCart.addProduct(product3, 0);
+  shoppingCart.addProduct(product4, -2);
+  shoppingCart.addProduct(product5, 3);
+  shoppingCart.addProduct(product6, 3);
+  
+  if(shoppingCart.removeProduct(product1) != null) {
+   System.out.println("The product has been successfully deleted.");
+  }
+  
+  shoppingCart.printShoppingCartContent();
+ }
 }
 ```
 
@@ -236,14 +236,274 @@ a) En la clase `Product.java`:
 
 Además, añadir un mensaje de error descriptivo en cada una de las aserciones que se hayan implementado.
 
+`Product.java`
+
+```java
+public class Product {
+ 
+ private int code;
+ private String name;
+ private String category;
+ private double weight;
+ private double height;
+ 
+ public Product(int code, String name, String category, double weight, double height) {
+  assert code >= 0 : "Error: The code must be greater than 0.";
+  assert !name.isEmpty() : "Error: The name must not be empty.";
+  assert !category.isEmpty() : "Error: The category must not be empty.";
+  assert weight >= 0 : "Error: The weight must be greater than 0.";
+  assert height >= 0 : "Error: The height must be greater than 0.";
+  
+  this.code = code;
+  
+  if(name == null) {
+   this.name = "";
+  } else {
+   this.name = name;
+  }
+  
+  if(category == null) {
+   this.category = "";
+  } else {
+   this.category = category;
+  }
+  
+  this.category = category;
+  this.weight = weight;
+  this.height = height;
+ }
+ 
+ public int getCode() {
+  return code;
+ }
+ 
+ public void setName(String name) {
+  this.name = name;
+ }
+ 
+ public String getName() {
+  return this.name;
+ }
+ 
+ public void setCategory(String category) {
+  this.category = category;
+ }
+ 
+ public String getCategory() {
+  return this.category;
+ }
+ 
+ public void setWeight(double weight) {
+  this.weight = weight;
+ }
+ 
+ public double getWeight() {
+  return this.weight;
+ }
+ 
+ public void setHeight(double height) {
+  this.height = height;
+ }
+ 
+ public double getHeight() {
+  return this.height;
+ }
+}
+```
+
 b) En la clase `ShoppingCart.java`:
 
 - No se puede añadir un producto con un número de unidades negativo o nulo.
 - No se puede eliminar un producto que no existe en el carrito.
 
+`ShoppingCart.java`
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class ShoppingCart {
+
+ Map<Product, Integer> shoppingCart;
+
+ public ShoppingCart() {
+  shoppingCart = new HashMap<Product, Integer>();
+ }
+
+ public void addProduct(Product product, int number) {
+  assert number > 0 : "Error: The number must be non negative nor zero.";
+  if (shoppingCart.keySet().stream().filter(element -> element.getCode() == product.getCode()).count() == 0) {
+   shoppingCart.put(product, number);
+  }
+ }
+
+ public Product removeProduct(Product product) {
+  assert shoppingCart.containsKey(product) : "Error: The product must be in the shopping cart.";
+  shoppingCart.remove(product);
+  return product;
+
+ }
+
+ public void printShoppingCartContent() {
+  System.out.println("The shopping cart content is: ");
+
+  for (Product product : shoppingCart.keySet()) {
+   System.out.println(product.getCode() + " - " + product.getName() + " : " + shoppingCart.get(product));
+  }
+
+ }
+}
+```
+
 ### Ejercicio 2
 
 Dado el código del primer ejercicio, ¿existe algún uso indebido del valor `null`?. En caso afirmativo, reemplazar su uso por el de la clase `Optional` en los casos en los que sea necesario.
+
+Sí, en el contructor del producto se comprueba si el nombre y la categoría son null, se ha modificado de la siguiente forma.
+
+```java
+package Ej2;
+
+import java.util.Optional;
+
+public class Product {
+
+ private int code;
+ private String name;
+ private String category;
+ private double weight;
+ private double height;
+
+ public Product(int code, Optional<String> name, Optional<String> category, double weight, double height) {
+
+  this.code = code;
+
+  this.name = name.orElse("");
+  this.category = category.orElse("");
+  this.weight = weight;
+  this.height = height;
+ }
+
+ public int getCode() {
+  return code;
+ }
+
+ public void setName(String name) {
+  this.name = name;
+ }
+
+ public String getName() {
+  return this.name;
+ }
+
+ public void setCategory(String category) {
+  this.category = category;
+ }
+
+ public String getCategory() {
+  return this.category;
+ }
+
+ public void setWeight(double weight) {
+  this.weight = weight;
+ }
+
+ public double getWeight() {
+  return this.weight;
+ }
+
+ public void setHeight(double height) {
+  this.height = height;
+ }
+
+ public double getHeight() {
+  return this.height;
+ }
+}
+```
+
+En `ShoppingCart.java` se ha modificado el método `removeProduct` para que devuelva un `Optional`
+
+`ShoppingCart.java`
+
+```java
+package Ej2;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+public class ShoppingCart {
+
+ Map<Product, Integer> shoppingCart;
+
+ public ShoppingCart() {
+  shoppingCart = new HashMap<Product, Integer>();
+ }
+
+ public void addProduct(Product product, int number) {
+
+  if (shoppingCart.keySet().stream().filter(element -> element.getCode() == product.getCode()).count() == 0) {
+   shoppingCart.put(product, number);
+  }
+ }
+
+ public Optional<Product> removeProduct(Product product) {
+  if (shoppingCart.containsKey(product)) {
+   shoppingCart.remove(product);
+   return Optional.of(product);
+  }
+  
+  return Optional.empty();
+
+ }
+
+ public void printShoppingCartContent() {
+  System.out.println("The shopping cart content is: ");
+
+  for (Product product : shoppingCart.keySet()) {
+   System.out.println(product.getCode() + " - " + product.getName() + " : " + shoppingCart.get(product));
+  }
+
+ }
+}
+```
+
+El `Main.java` ha sufrido cambios también.
+
+```java
+package Ej2;
+
+import java.util.Optional;
+
+import javax.swing.text.html.Option;
+
+public class Main {
+
+    public static void main(String args[]) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+
+        Product product1 = new Product(1, Optional.of("Product1"), Optional.of("Category1"), -1.0, 2.0);
+        Product product2 = new Product(2, Optional.of("Product2"), Optional.of("Category2"), 5.0, -6.0);
+        Product product3 = new Product(3, Optional.of("Product3"), Optional.of(null), 5.0, 6.0);
+        Product product4 = new Product(4, Optional.of(null), Optional.of("Category4"), 5.0, 6.0);
+        Product product5 = new Product(4, Optional.of("Product5"), Optional.of("Caregory5"), 5.0, 6.0);
+        Product product6 = new Product(-6, Optional.of("Product6"), Optional.of("Caregory6"), 5.0, 6.0);
+
+        shoppingCart.addProduct(product1, 2);
+        shoppingCart.addProduct(product2, 1);
+        shoppingCart.addProduct(product3, 0);
+        shoppingCart.addProduct(product4, -2);
+        shoppingCart.addProduct(product5, 3);
+        shoppingCart.addProduct(product6, 3);
+
+        if (shoppingCart.removeProduct(product1).isPresent()) {
+            System.out.println("The product has been successfully deleted.");
+        }
+        shoppingCart.printShoppingCartContent();
+    }
+}
+```
 
 ## Referencias
 
