@@ -69,6 +69,78 @@ public class Main {
 - Operación que multiplique todos los números de la lista por 10 e imprima el resultado.
 - Operación que devuelva el resultado de la suma de todos los números de la lista.
 
+`Solución`
+
+`DataOperations.java`
+
+```java
+public interface DataOperations {
+    public void print(int[] data);
+    public int[] filterPairs(int[] data);
+    public int[] sortDescending(int[] data);
+    public void printMultiplyBy10(int[] data);
+    public int sum(int[] data);
+}
+```
+
+`DataOperationsImpl.java`
+
+```java
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class DataOperationsImpl implements DataOperations {
+    @Override
+    public void print(int[] data) {
+        Arrays.stream(data).forEach(element -> System.out.print(element + ", "));
+        System.out.println();
+    }
+
+    @Override
+    public int[] filterPairs(int[] data) {
+        return Arrays.stream(data).filter(element -> element % 2 != 0).toArray();
+    }
+
+    @Override
+    public void printMultiplyBy10(int[] data) {
+        Arrays.stream(data).forEach(element -> System.out.print(element * 10 + ", "));
+        System.out.println();
+    }
+
+    @Override
+    public int[] sortDescending(int[] data) {
+        return Arrays.stream(data).boxed().sorted(Comparator.reverseOrder()).mapToInt(element -> element).toArray();
+    }
+
+    @Override
+    public int sum(int[] data) {
+        return Arrays.stream(data).sum();
+    }
+
+}
+```
+
+`Main.java`
+
+```java
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String args[]) {
+        int[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        System.out.println("data = " + Arrays.toString(data));
+        DataOperations operations = new DataOperationsImpl();
+        operations.print(data);
+        data = operations.filterPairs(data);
+        operations.print(data);
+        operations.printMultiplyBy10(data);
+
+        operations.print(operations.sortDescending(data));
+        System.out.println("sum = " + operations.sum(data));
+    }
+}
+```
+
 ### Ejercicio 2
 
 Dado los siguientes fragmentos de código que implementan un API cuya interfaz viene dada por `DataSorter`, responder a las siguientes preguntas.
@@ -134,6 +206,66 @@ public class Main {
 1. Utilice cierres (*closures*) para cambiar la implementación de las clases `DataSorterAsc` y `DataSorterDesc` usando los mecanismos de la programación funcional.
 
 2. Añada un tercer cambio haciendo uso de cierres (*closures*) para realizar la ordenación aleatoria de los elementos, siguiendo el mismo enfoque aplicado con las clases `DataSorterAsc` y `DataSorterDesc` en el apartado anterior.
+
+`Solución`
+`DataSorter.java`
+
+```java
+public interface DataSorter {
+    public String[] sort(String[] data);
+}
+```
+
+`DataSorterAsc.java`
+
+```java
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class DataSorterAsc implements DataSorter {
+    public String[] sort(String[] data) {
+        Comparator<String> comparator = (String s1, String s2) -> s1.compareTo(s2);
+        Arrays.sort(data, comparator);
+        return data;
+    }
+}
+```
+
+`DataSorterAsc.java`
+
+```java
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class DataSorterDesc implements DataSorter {
+    public String[] sort(String[] data) {
+        Comparator<String> comparator = (String s1, String s2) -> s2.compareTo(s1);
+        Arrays.sort(data, comparator);
+        return data;
+    }
+}
+```
+
+`Main.java`
+
+```java
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String args[]) {
+        int[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        System.out.println("data = " + Arrays.toString(data));
+        DataOperations operations = new DataOperationsImpl();
+        operations.print(data);
+        data = operations.filterPairs(data);
+        operations.print(data);
+        operations.printMultiplyBy10(data);
+
+        operations.print(operations.sortDescending(data));
+        System.out.println("sum = " + operations.sum(data));
+    }
+}
+```
 
 ## Referencias
 
