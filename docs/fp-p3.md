@@ -10,8 +10,8 @@ Un *stream* representa una secuencia de elementos que soportan diferentes tipos 
 
 Las operaciones sobre un stream pueden ser intermediarias o terminales
 
-  - Las operaciones __intermediarias__ devuelven un nuevo stream permitiendo encadenar múltiples operaciones intermediarias sin usar punto y coma
-  - Las operaciones __terminales__ son nulas o devuelven un resultado de un tipo diferente, normalmente un valor agregado a partir de cómputos anteriores
+- Las operaciones __intermediarias__ devuelven un nuevo stream permitiendo encadenar múltiples operaciones intermediarias sin usar punto y coma
+- Las operaciones __terminales__ son nulas o devuelven un resultado de un tipo diferente, normalmente un valor agregado a partir de cómputos anteriores
 
 ```java
 public class Main{
@@ -30,11 +30,11 @@ public class Main{
 
 En el ejemplo anterior, las operaciones `filter`, `map` y `sorted` son operaciones intermediarias, mientras que la operación `forEach` es una operación terminal.
 
-Más información: https://www.oracle.com/technetwork/es/articles/java/procesamiento-streams-java-se-8-2763402-esa.html
+Más información: <https://www.oracle.com/technetwork/es/articles/java/procesamiento-streams-java-se-8-2763402-esa.html>
 
 Por otro lado, se puede observar que la mayoría de las operaciones que se aplican sobre *streams* aceptan algún tipo de parámetro en forma de *expresión lambda*, que es una interfaz funcional que especifica el comportamiento exacto de la operación. Estas operaciones no pueden modificar el contenido del *stream* original.
 
-En el ejemplo anterior, se puede observar que ninguna de las operaciones modifica el estado de `myList` añadiendo o eliminando elementos, sino que sólo se filtran los elementos que empiezan por _c_, se transforman a mayúsculas, se ordenan (por defecto, alfabéticamente) y se imprimen por pantalla.
+En el ejemplo anterior, se puede observar que ninguna de las operaciones modifica el estado de `myList` añadiendo o eliminando elementos, sino que sólo se filtran los elementos que empiezan por *c*, se transforman a mayúsculas, se ordenan (por defecto, alfabéticamente) y se imprimen por pantalla.
 
 Otro ejemplo del uso del Stream API en Java:
 
@@ -114,7 +114,6 @@ Si además se quiere imprimir el resultado obtenido en `streams`:
 stream.forEach(product -> System.out.println(product));
 ```
 
-
 #### Consultas con ordenación
 
 En este caso se desea listar los nombres de los productos cuya existencia en el almacén sea menor a 10 unidades pero en orden ascendente, es decir, de menor existencia a mayor existencia.
@@ -181,6 +180,7 @@ group by unitsInStock;
 
 El equivalente con Java Stream API sería:
 å
+
 ```java
 Map<Integer, Double> collect = products.stream()
     .collect(
@@ -233,7 +233,6 @@ entryList.forEach(list -> System.out.printf("en stock: %s, suma: %s\n",list.getK
 - Con el método `collect` se realiza el agrupamiento a través de los criterios recibidos como parámetros. En este caso, los productos se agrupan por número de unidades existentes en el almacen y se suman. Sería el equivalent a `group by` con el uso de `sum` en SQL.
 - Con el método `filter` se recuperan únicamente los productos que cumplan la condición que se le pasa como parámetro. En este caso, los que la suma sea mayor que 100. En este caso, sería equivalente al `having` de SQL porque va detrás de una operación con criterios de agrupación.
 
-
 ## Ejercicios propuestos
 
 ### Ejercicio 1
@@ -281,6 +280,7 @@ public class Employee {
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EmployeeDatabase {
 
@@ -291,43 +291,67 @@ public class EmployeeDatabase {
             new Employee("Employee4", 50));
 
     public static Employee getEmployeeByName(String name) {
-        Employee result = null;
-        for(Employee e: employees) {
-            if(e.getName().equals(name)) {
-                result = e;
-            }
-        }
-        return result;
+        return employees.stream()
+                .filter(e -> e.getName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     public static Employee getEmployeeByNameAndAge(String name, int age) {
-        Employee result = null;
-        for(Employee e: employees) {
-            if(e.getName().equals(name) && e.getAge() == age) {
-                result = e;
-            }
-        }
-        return result;
+        return employees.stream()
+                .filter(e -> e.getName().equals(name) && e.getAge() == age)
+                .findFirst()
+                .orElse(null);
     }
 
     public static List<Employee> getEmployeeByAgeOver(int limitAge) {
         List<Employee> result = new ArrayList<Employee>();
-        for(Employee e: employees) {
-            if(e.getAge() > limitAge) {
-                result.add(e);
-            }
-        }
+        result = employees.stream()
+                .filter(e -> e.getAge() > limitAge)
+                .collect(Collectors.toList());
         return result;
     }
 
     public static List<Employee> getEmployeeByAgeUnder(int limitAge) {
         List<Employee> result = new ArrayList<Employee>();
-        for(Employee e: employees) {
-            if(e.getAge() < limitAge) {
-                result.add(e);
-            }
-        }
+        result = employees.stream()
+                .filter(e -> e.getAge() < limitAge)
+                .collect(Collectors.toList());
         return result;
+    }
+
+    public static List<Employee> getEmployeesWithinAgeRange(int minAge, int maxAge) {
+        List<Employee> result = new ArrayList<Employee>();
+        result = employees.stream()
+                .filter(e -> e.getAge() >= minAge && e.getAge() <= maxAge)
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    public static List<Employee> getEmployeesSortedAscByAge() {
+        List<Employee> result = new ArrayList<Employee>();
+        result = employees.stream()
+                .sorted((e1, e2) -> e1.getAge() - e2.getAge())
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    public static List<Employee> getEmployeesSortedDescByAge() {
+        List<Employee> result = new ArrayList<Employee>();
+        result = employees.stream()
+                .sorted((e1, e2) -> e2.getAge() - e1.getAge())
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    public static long getNumberOfEmployees() {
+        return employees.stream().count();
+    }
+
+    public static long getNumberOfEmployeesWithName(String name) {
+        return employees.stream()
+                .filter(e -> e.getName().equals(name))
+                .count();
     }
 }
 ```
@@ -338,17 +362,24 @@ public class EmployeeDatabase {
 public class Main {
     public static void main(String args[]) {
         System.out.println("Employee = " +
-          EmployeeDatabase.getEmployeeByName("Employee1"));
+                EmployeeDatabase.getEmployeeByName("Employee1"));
         System.out.println("Employee = " +
-          EmployeeDatabase.getEmployeeByName("EmployeeNull"));
+                EmployeeDatabase.getEmployeeByName("EmployeeNull"));
         System.out.println("Employee = " +
-          EmployeeDatabase.getEmployeeByNameAndAge("Employee2", 30));
+                EmployeeDatabase.getEmployeeByNameAndAge("Employee2", 30));
         System.out.println("Employee = " +
-          EmployeeDatabase.getEmployeeByNameAndAge("Employee2", 20));
+                EmployeeDatabase.getEmployeeByNameAndAge("Employee2", 20));
         System.out.println("Employees = " +
-          EmployeeDatabase.getEmployeeByAgeOver(30));
+                EmployeeDatabase.getEmployeeByAgeOver(30));
         System.out.println("Employees = " +
-          EmployeeDatabase.getEmployeeByAgeUnder(30));
+                EmployeeDatabase.getEmployeeByAgeUnder(30));
+
+        System.out.println("Employees = " + EmployeeDatabase.getEmployeesSortedAscByAge());
+        System.out.println("Employees = " + EmployeeDatabase.getEmployeesSortedDescByAge());
+        System.out.println("Employees = " + EmployeeDatabase.getEmployeesWithinAgeRange(20, 40));
+
+        System.out.println("Employees = " + EmployeeDatabase.getNumberOfEmployees());
+        System.out.println("Employees = " + EmployeeDatabase.getNumberOfEmployeesWithName("Employee1"));
     }
 }
 ```
@@ -394,6 +425,135 @@ Basándose en el código del ejercicio anterior, implemente una API para una tie
     - Obtener la suma de los precios de los videojuegos agrupados por cateogoría, siempre que el precio obtenido de la suma sea superior a 200€.
 
 3. Implemente además un programa de prueba `Main` que ilustre el uso de las operaciones anteriores.
+
+#### Videogame.java
+
+```java
+public class Videogame {
+
+    private String name;
+    private String genre;
+    private double price;
+
+    public Videogame(String name, String genre, double price) {
+        this.name = name;
+        this.genre = genre;
+        this.price = price;
+    }
+    public String getName() {
+        return name;
+    }
+    public String getGenre() {
+        return genre;
+    }
+    public double getPrice() {
+        return price;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+    public void setPrice(double price) {
+        this.price = price;
+    }
+}
+```
+
+#### VideogameDatabase
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class VideogameDatabase {
+    private static List<Videogame> videogames = Arrays.asList(
+            new Videogame("Super Mario", "Plataformas", 30.99),
+            new Videogame("FIFA 2020", "Deportes", 60.99), new Videogame("Call of Duty", "Shooter", 50.99),
+            new Videogame("The Legend of Zelda", "Aventura", 40.99), new Videogame("Minecraft", "Sandbox", 20.99),
+            new Videogame("Fortnite", "Battle Royale", 0.00), new Videogame("League of Legends", "MOBA", 0.00),
+            new Videogame("World of Warcraft", "MMORPG", 0.00), new Videogame("Overwatch", "Shooter", 20.99),
+            new Videogame("Rocket League", "Deportes", 20.99),
+            new Videogame("Resident Evil", "Terror", 20.99),
+            new Videogame("Silent Hill Golden Special Edition", "Terror", 320.99));
+
+    public static List<String> getVideogamesTitles() {
+        return videogames.stream().map(Videogame::getName).toList();
+    }
+
+    public static List<String> getVideogamesTitlesPriceGreaterThan20() {
+        return videogames.stream().filter(videogame -> videogame.getPrice() > 20).map(Videogame::getName).toList();
+    }
+
+    public static List<String> getHorrorVideoGamesTitles() {
+        return videogames.stream().filter(videogame -> videogame.getGenre().equals("Terror")).map(Videogame::getName)
+                .toList();
+    }
+
+    public static List<String> getVideogameTitlesOrderedByPriceAscAndPriceGreaterThan20() {
+        return videogames.stream()
+                .filter(videogame -> videogame.getPrice() > 20)
+                .sorted((v1, v2) -> Double.compare(v1.getPrice(), v2.getPrice()))
+                .map(Videogame::getName).toList();
+    }
+
+    public static List<String> getVideogameTitlesOrderedByPriceDescAndPriceGreaterThan20() {
+        return videogames.stream()
+                .filter(videogame -> videogame.getPrice() > 20)
+                .sorted((v1, v2) -> Double.compare(v2.getPrice(), v1.getPrice()))
+                .map(Videogame::getName).toList();
+    }
+
+    public static Map<String, Long> getNumberOfVideogamesGroupedByCategory() {
+        return videogames.stream()
+                .map(Videogame::getGenre)
+                .collect(Collectors.groupingBy(genre -> genre, Collectors.counting()));
+    }
+
+    public static Map<String, Double> getPriceSumGroupedByCategory() {
+        return videogames.stream()
+                .map(Videogame::getGenre)
+                .distinct()
+                .collect(Collectors.toMap(genre -> genre, genre -> videogames.stream()
+                        .filter(videogame -> videogame.getGenre().equals(genre))
+                        .mapToDouble(Videogame::getPrice).sum()));
+    }
+
+    public static Map<String, Double> getPriceSumGroupeedByCategorySumGreaterThan200() {
+        return videogames.stream()
+                .map(Videogame::getGenre)
+                .distinct()
+                .collect(Collectors.toMap(genre -> genre, genre -> videogames.stream()
+                        .filter(videogame -> videogame.getGenre().equals(genre))
+                        .mapToDouble(Videogame::getPrice).sum()))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 200)
+                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+    }
+}
+
+```
+
+#### Main.java
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Video games titles: " + VideogameDatabase.getVideogamesTitles());
+        System.out.println("Video games titles price greater than 20: " + VideogameDatabase.getVideogamesTitlesPriceGreaterThan20());
+        System.out.println("Horror video games titles: " + VideogameDatabase.getHorrorVideoGamesTitles());
+        System.out.println("Video game titles ordered by price asc and price greater than 20: " + VideogameDatabase.getVideogameTitlesOrderedByPriceAscAndPriceGreaterThan20());
+        System.out.println("Video game titles ordered by price desc and price greater than 20: " + VideogameDatabase.getVideogameTitlesOrderedByPriceDescAndPriceGreaterThan20());
+        System.out.println("Number of video games grouped by category: " + VideogameDatabase.getNumberOfVideogamesGroupedByCategory());
+        System.out.println("Price sum grouped by category: " + VideogameDatabase.getPriceSumGroupedByCategory());
+        System.out.println("Price sum grouped by category sum greater than 200: " + VideogameDatabase.getPriceSumGroupeedByCategorySumGreaterThan200());
+    }
+}
+
+```
 
 ## Referencias
 
