@@ -4,7 +4,7 @@
 
 ## Programación asíncrona en Java
 
-En Java 5 se añadió la interfaz `Future` para integrar la programación asíncrona. Sin embargo, esta interfaz no proporcionaba la posibilidad de combinar los resultados obtenidos al aplicar diferentes operaciones o manejar los posibles errores. Por este motivo, en Java 8 se incluyó la clase `CompletableFuture`, junto a la interfaz `Future`, la cual implementa también la interfaz `CompletionStage`. Esta interfaz incluye el contrato de operaciones para incluir la combinación de resultados procedentes de diferentes operaciones. 
+En Java 5 se añadió la interfaz `Future` para integrar la programación asíncrona. Sin embargo, esta interfaz no proporcionaba la posibilidad de combinar los resultados obtenidos al aplicar diferentes operaciones o manejar los posibles errores. Por este motivo, en Java 8 se incluyó la clase `CompletableFuture`, junto a la interfaz `Future`, la cual implementa también la interfaz `CompletionStage`. Esta interfaz incluye el contrato de operaciones para incluir la combinación de resultados procedentes de diferentes operaciones.
 
 En las secciones posteriores se verán algunos de los usos propuestos por esta interfaz en Java 8.
 
@@ -12,43 +12,44 @@ En las secciones posteriores se verán algunos de los usos propuestos por esta i
 
 A continuación se muestra un ejemplo de uso de la clase `CompletableFuture`:
 
-
 #### `Main.java`
+
 ```java
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class Main {
-	public static void main(String args[]) throws InterruptedException, ExecutionException {
-		Future<String> completableFuture = AsynchronousAPI.helloWorldAsync();
-		String result = completableFuture.get();
-		System.out.println("The result is " + result);
-	}
+ public static void main(String args[]) throws InterruptedException, ExecutionException {
+  Future<String> completableFuture = AsynchronousAPI.helloWorldAsync();
+  String result = completableFuture.get();
+  System.out.println("The result is " + result);
+ }
 }
 ```
 
 #### `AsynchronousAPI.java`
+
 ```java
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class AsynchronousAPI {
-	
-	public static Future<String> helloWorldAsync() throws InterruptedException {
-	    CompletableFuture<String> completableFuture 
-	      = new CompletableFuture<>();
-	 
-	    Executors.newCachedThreadPool().submit(() -> {
-	        Thread.sleep(1000);
-	        completableFuture.complete("Hello world");
-	        return null;
-	    });
-	 
-	    return completableFuture;
-	}
+ 
+ public static Future<String> helloWorldAsync() throws InterruptedException {
+     CompletableFuture<String> completableFuture 
+       = new CompletableFuture<>();
+  
+     Executors.newCachedThreadPool().submit(() -> {
+         Thread.sleep(1000);
+         completableFuture.complete("Hello world");
+         return null;
+     });
+  
+     return completableFuture;
+ }
 }
-``` 
+```
 
 En primer lugar, en la función `main` se obtiene la variable `completableFuture`, la cual es de tipo `Future<String>`, esta variable obtendrá su valor cuando la función `helloWorldAsync()` se resuelva.
 
@@ -63,58 +64,60 @@ En este caso, cuando finalice el procesamiento del programa se mostrará por con
 A continuación, se muestra un ejemplo del uso del resultado devuelto en un `CompletableFuture` desde otra variable del mismo tipo:
 
 #### `Main.java`
+
 ```java
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
-	public static void main(String args[]) throws InterruptedException, ExecutionException {
-		
-		//Then apply
-		CompletableFuture<String> completableFuture =
-		   AsynchronousAPI.helloWorldAsync();
-		CompletableFuture<String> future =
-		   completableFuture.thenApply(s -> s + " world");
-		String result = future.get();
-		System.out.println(result);
-		
-		//Then accept
-		completableFuture = AsynchronousAPI.helloWorldAsync();
-		CompletableFuture<Void> futureVoid =
-		   completableFuture.thenAccept(s -> System.out.println(s + " world"));
-		futureVoid.get();
-		
-		//Then run
-		completableFuture = AsynchronousAPI.helloWorldAsync();
-		futureVoid = completableFuture.thenRun(() -> System.out.println( "world"));
-		futureVoid.get();
-	}
+ public static void main(String args[]) throws InterruptedException, ExecutionException {
+  
+  //Then apply
+  CompletableFuture<String> completableFuture =
+     AsynchronousAPI.helloWorldAsync();
+  CompletableFuture<String> future =
+     completableFuture.thenApply(s -> s + " world");
+  String result = future.get();
+  System.out.println(result);
+  
+  //Then accept
+  completableFuture = AsynchronousAPI.helloWorldAsync();
+  CompletableFuture<Void> futureVoid =
+     completableFuture.thenAccept(s -> System.out.println(s + " world"));
+  futureVoid.get();
+  
+  //Then run
+  completableFuture = AsynchronousAPI.helloWorldAsync();
+  futureVoid = completableFuture.thenRun(() -> System.out.println( "world"));
+  futureVoid.get();
+ }
 }
 ```
 
 #### `AsynchronousAPI.java`
+
 ```java
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class AsynchronousAPI {
-	
-	public static CompletableFuture<String> helloWorldAsync() throws InterruptedException {
-	    CompletableFuture<String> completableFuture 
-	      = new CompletableFuture<>();
-	 
-	    Executors.newCachedThreadPool().submit(() -> {
-	        Thread.sleep(1000);
-	        completableFuture.complete("Hello");
-	        return null;
-	    });
-	 
-	    return completableFuture;
-	}
+ 
+ public static CompletableFuture<String> helloWorldAsync() throws InterruptedException {
+     CompletableFuture<String> completableFuture 
+       = new CompletableFuture<>();
+  
+     Executors.newCachedThreadPool().submit(() -> {
+         Thread.sleep(1000);
+         completableFuture.complete("Hello");
+         return null;
+     });
+  
+     return completableFuture;
+ }
 
 }
-``` 
+```
 
 En este caso, la función `helloWorldAsync` realiza el mismo comportamiento que en el ejemplo anterior, únicamente con la diferencia de que devuelve `Hello` y no `Hello world` completo.
 
@@ -125,7 +128,6 @@ Por otro lado, en la función `main` se utilizan tres funciones de la clase `Com
 - `thenAccept()`: La variable `futureVoid` espera el resultado de la resolución de la variable `completableFuture`, como en el caso anterior. La diferencia es que la variable `futureVoid` no podrá devolver un resultado de tipo `String` en su resolución, sino que será de tipo `Void`. Por este motivo, se lanza directamente la función `System.out.println` en la resolución de la variable `futureVoid`.
 
 - `thenRun()`: La variable `futureVoid` en este caso no espera ningún resultado, sino que sólo espera la resolución de la variable `completableFuture`. Como en el caso anterior, la variable `futureVoid` lanzará directamente la función `System.out.println` en su resolución, pero no concatenará el resultado de la variable `completableFuture`, mostrando únicamente la palabra `world`.
-
 
 ### Combinación de Futures
 
@@ -141,9 +143,9 @@ CompletableFuture<String> completableFuture
 CompletableFuture<String> completableFuture 
   = CompletableFuture.supplyAsync(() -> "Hello")
     .thenCombine(
-	  CompletableFuture.supplyAsync(() -> " World"),
-	  (s1, s2) -> s1 + s2)
-	);
+   CompletableFuture.supplyAsync(() -> " World"),
+   (s1, s2) -> s1 + s2)
+ );
 ```
 
 ```java
@@ -206,17 +208,27 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class AsynchronousAPI {
-	
-	public static Future<Integer> additionAsync(List<Integer> elements) throws InterruptedException {
-	    CompletableFuture<Integer> completableFuture 
-	      = new CompletableFuture<>();
-	 
-	    Executors.newCachedThreadPool().submit(() -> {
-	    //TO-DO
-	    });
-	 
-	    return completableFuture;
-	}
+
+    public static Future<Integer> additionAsync(List<Integer> elements) throws InterruptedException {
+        CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            try {
+                int result = 0;
+                for (Integer element : elements) {
+                    System.out.println("Adding " + element);
+                    Thread.sleep(5000);
+                    result += element;
+                }
+                completableFuture.complete(result);
+            } catch (Exception ex) {
+                completableFuture.completeExceptionally(ex);
+            }
+            return null;
+        });
+
+        return completableFuture;
+    }
 }
 ```
 
@@ -229,13 +241,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class Main {
-	
-	public static void main(String args[]) throws InterruptedException, ExecutionException {
-		List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-		Future<Integer> completableFuture = //TO-DO;
-		Integer result = //TO-DO;
-		System.out.println("The result is " + result);
-	}
+
+    public static void main(String args[]) throws InterruptedException, ExecutionException {
+  List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+  Future<Integer> completableFuture = AsynchronousAPI.additionAsync(elements);
+  Integer result = completableFuture.get();
+  System.out.println("The result is " + result);
+ }
 }
 ```
 
@@ -247,7 +259,6 @@ Complete las secciones TO-DO de las clases `AsynchronousAPI` y `Main`, teniendo 
 - El método `additionAsync` debe mostrar por consola cada uno de los elementos que esta sumando con el mensaje `Adding (element)`.
 - El método `additionAsync` debe añadir un retardo de 5 segundos en la suma de cada elemento.
 - En la función `main` se debe mostrar en consola el resultado de la suma completa con el mensaje `The result is (result)`.
-
 
 ### Ejercicio 2
 
@@ -261,15 +272,40 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
 public class AsynchronousAPI {
-	
-	public static CompletableFuture<Integer> additionAsync(List<Integer> elements) throws InterruptedException {
-	 //TO-DO
-	}
-	
-	public static CompletableFuture<Integer> mutiplicationAsync(List<Integer> elements) throws InterruptedException {
-	//TO-DO
-	}
 
+    public static CompletableFuture<Integer> additionAsync(List<Integer> elements) throws InterruptedException {
+        CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            Integer result = 0;
+            for (Integer element : elements) {
+                System.out.println("Adding " + element);
+                Thread.sleep(2000);
+                result += element;
+            }
+            completableFuture.complete(result);
+            return null;
+        });
+
+        return completableFuture;
+    }
+
+    public static CompletableFuture<Integer> mutiplicationAsync(List<Integer> elements) throws InterruptedException {
+        CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            Integer result = 1;
+            for (Integer element : elements) {
+                System.out.println("Multiplying " + element);
+                Thread.sleep(3000);
+                result *= element;
+            }
+            completableFuture.complete(result);
+            return null;
+        });
+
+        return completableFuture;
+    }
 }
 ```
 
@@ -282,14 +318,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
-	
-	public static void main(String args[]) throws InterruptedException, ExecutionException {
-		List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-		List<Integer> elements2 = Arrays.asList(11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
-		CompletableFuture<Void> completableFuture = //TO-DO;
-		
-		completableFuture.get();
-	}
+    public static void main(String args[]) throws InterruptedException, ExecutionException {
+        List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<Integer> elements2 = Arrays.asList(11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+        CompletableFuture<Void> completableFuture = AsynchronousAPI.additionAsync(elements)
+                .thenAcceptBoth(AsynchronousAPI.mutiplicationAsync(elements2), (result1, result2) -> {
+                    System.out.println("Addition result: " + result1);
+                    System.out.println("Multiplication result: " + result2);
+                });
+        completableFuture.get();
+    }
 }
 ```
 
