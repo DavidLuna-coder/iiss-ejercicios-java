@@ -95,11 +95,16 @@ public class Main {
 #### Preguntas propuestas
 
 1. ¿Se realiza inyección de dependencias entre las clases anteriores? Si es así, identifique la clase inyectora, el servicio y el cliente.
+
+Sí se realiza inyección de dependencias a través del constructor y a través del método setDbAccess. La clase inyectora sería `Main`, ya que es la que se encarga de inyectar las dependencias. El servicio inyectado serían las clases que implementan la interfaz `DBAccess`. El cliente sería la clase `DBClient` que es la que consume el servicio inyectado.
+
 2. En el caso de que exista inyección de dependencias, además indique:
 
 - El método de inyección que se realiza (constructor, propiedad o método).
 - La/s línea/s donde se realiza la inyección de dependencias.
 
+La inyección se realiza a través del constructor en la línea 5.
+`DBClient client = new DBClient(dbAccessB);`
 
 ### Ejercicio 2
 
@@ -201,7 +206,7 @@ Para realizar el ejercicio, se usará __maven__ como herramienta de construcció
 
 Puede emplear los siguientes comandos para compilar, limpiar y/o generar un fichero _jar_ con todas las dependencias necesarias, preparado para ejecutar:
 
-- `mvn compile ` — compilar todo el código del proyecto
+- `mvn compile` — compilar todo el código del proyecto
 
 - `mvn clean`  — limpiar el proyecto
 
@@ -209,10 +214,9 @@ Puede emplear los siguientes comandos para compilar, limpiar y/o generar un fich
 
 - `mvn compile assembly:single` — compilar y generar el jar
 
-
 Para ejecutar, por ejemplo, una clase principal `Main` dentro del jar generado para el proyecto `ejercicio-aspectj` (según la configuración del `pom.xml` incluida en el proyecto), se puede usar el siguiente comando:
 
-```shel
+```shell
 java -cp target/ejercicio-aspectj-0.0.1-SNAPSHOT-jar-with-dependencies.jar Main
 ```
 
@@ -226,10 +230,54 @@ Los pasos a completar son:
 
 a) Mostrar el mensaje "The login is required" antes de la ejecución de las operaciones `makeTransaction` y `takeMoneyOut`.
 
+```java
+package es.uca.iiss.aspectj;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+
+@Aspect
+public class LoginAspect {
+  @Before("execution(* Bank.makeTransaction()) || execution(* Bank.takeMoneyOut())")
+  public void before(JoinPoint joinPoint) {
+    System.out.println("The login is required");
+  }
+
+  @After("TO-DO")
+  public void after(JoinPoint joinPoint) {
+    //TO-DO
+  }
+}
+```
+
 b) Mostrar el mensaje "The database is empty" después de la ejecución de la operación `showUsers`.
 
-3. Finalmente, sustituir el fichero `LoginAspect.java` por el fichero `LoginAspect.aj` incluyendo la misma funcionalidad pero utilizando la sintaxis de AspectJ.
+```java
+package es.uca.iiss.aspectj;
 
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+
+@Aspect
+public class LoginAspect {
+  @Before("execution(* Bank.makeTransaction()) || execution(* Bank.takeMoneyOut())")
+  public void before(JoinPoint joinPoint) {
+    System.out.println("The login is required");
+  }
+
+  @After("execution(* Bank.showUsers())")
+  public void after(JoinPoint joinPoint) {
+    System.out.println("The database is empty");
+  }
+}
+
+```
+
+3. Finalmente, sustituir el fichero `LoginAspect.java` por el fichero `LoginAspect.aj` incluyendo la misma funcionalidad pero utilizando la sintaxis de AspectJ.
 
 ## Referencias
 
